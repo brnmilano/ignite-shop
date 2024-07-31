@@ -2,22 +2,16 @@
 
 :root {
   // Standard colors
-  --primary: #5d00bf;
-  --secondary: #00a38c;
-  --background: #f9f6fc;
-  --success: #2e7d32;
-  --error: #d21b1b;
-  --alert: #e9ba15;
-  --shadow: #00000026;
+  --primary: #00875f;
+  --light: #00b37e;
+  --background: #121214;
+  --elements: #202024;
+  --text: #c4c4cc;
+  --title: #e1e1e6;
 
   //General colors
   --white: #ffffff;
-  --red: #d21b1b;
   --black: #000000;
-  --blue: #3294f8;
-  --green: #2ecc71;
-  --yellow: #dbac2c;
-  --purple: #8047f8;
 
   // Grayscale
   --gray-100: #f0f0f0; /* 100: Cinza claro */
@@ -41,9 +35,8 @@ $breakpoint-lg: 1024px; // Grande, para desktops
 $breakpoint-xl: 1200px; // Extra grande, para monitores largos
 
 html {
-  background-color: var(--white);
+  background-color: var(--background);
   width: 100%;
-  overflow-x: hidden;
 }
 
 body {
@@ -54,40 +47,52 @@ body {
 }
 
 main {
-  background-color: var(--white);
+  background-color: var(--background);
 }
 
 h1 {
-  font-size: 1.5rem;
+  font-size: 1.125rem;
   font-weight: 500;
   margin: 0;
-  //color: var(--text);
+  color: var(--title);
 }
 
 h2 {
-  font-size: 1.375rem;
+  font-size: 1rem;
+  font-weight: 500;
   margin: 0;
-  //color: var(--text);
+  color: var(--title);
 }
 
-h3 {
-  font-size: 1.125rem;
-  margin: 0;
-  //color: var(--text);
+// Estilos para smartphones médios
+@include media-sm {
+  h1 {
+    font-size: 1.25rem;
+  }
+
+  h2 {
+    font-size: 1.125rem;
+  }
 }
 
 // Estilos para tablets
 @include media-md {
   h1 {
-    font-size: 1.625rem;
+    font-size: 1.5rem;
   }
 
   h2 {
     font-size: 1.375rem;
   }
+}
 
-  h3 {
-    font-size: 1.125rem;
+@include media-lg {
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.875rem;
   }
 }
 
