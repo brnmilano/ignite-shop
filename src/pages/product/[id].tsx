@@ -10,6 +10,7 @@ import { useState } from "react";
 import Stripe from "stripe";
 import axios from "axios";
 import Image from "next/image";
+import Head from "next/head";
 
 interface ProductProps {
   product: {
@@ -26,48 +27,70 @@ export default function Products({ product }: ProductProps) {
   const { query } = useRouter();
 
   const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] =
-    useState(false);
+    useState<boolean>(false);
 
   async function handleBuyButton() {
-    console.log(product.defaultPriceId);
+    // try catch deve ser usado quando vamos lidar com requisições de
+    // api's externas principalmente para operações que vem atráves
+    // de ações do usuário, dessa forma, conseguimos apresentar ao usuário
+    // se está tudo certo ou se houve algum erro.
+    try {
+      setIsCreatingCheckoutSession(true);
 
-    // try {
-    //   setIsCreatingCheckoutSession(true);
+      // Como quero criar uma checkout session, o melhor método a ser usado
+      // é o post.
+      // Nesse caso não é necessário criar um arquivo service, setando o baseUrl
+      // Aqui a API está rodando no mesmo endereço localhost:3000.
+      // O axios já entende que a requisição é para a mesma origem.
+      const response = await axios.post("/api/checkout", {
+        priceId: product.defaultPriceId,
+      });
 
-    //   const response = await axios.post("/api/checkout", {
-    //     priceId: product.defaultPriceId,
-    //   });
+      const { checkoutUrl } = response.data;
 
-    //   const { checkoutUrl } = response.data;
+      // Modelo utilizado para redirecionamento de páginas externas
+      // Para páginas dentro da aplicação, o ideal é usar o useRouter
+      window.location.href = checkoutUrl;
+    } catch (err) {
+      // Aqui, podemos conectar com alguma ferramenta de observabilidade
+      // Datadog ou Sentry para monitorar os erros que estão acontecendo.
+      setIsCreatingCheckoutSession(false);
 
-    //   window.location.href = checkoutUrl;
-    // } catch (err) {
-    //   setIsCreatingCheckoutSession(false);
-
-    //   alert("Falha ao redirecionar ao checkout!");
-    // }
+      alert("Falha ao redirecionar ao checkout!");
+    }
   }
 
   return (
-    <ProductContainer>
-      <ImageContainer>
-        <Image src={product.imageUrl} width={520} height={480} alt="" />
-      </ImageContainer>
+    <>
+      <Head>
+        <title>{product.name} | Ignite Shop</title>
+      </Head>
 
-      <ProductDetails>
-        <h1>Camiseta X</h1>
-        <span>R$ 79,90</span>
+      <ProductContainer>
+        <ImageContainer>
+          <Image src={product.imageUrl} width={520} height={480} alt="" />
+        </ImageContainer>
 
-        <p>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolores
-          aliquid rerum exercitationem facere a molestiae ut sed velit non
-          mollitia? Officiis hic velit assumenda aspernatur nihil, sint sed
-          laboriosam tempora?
-        </p>
+        <ProductDetails>
+          <h1>Camiseta X</h1>
+          <span>R$ 79,90</span>
 
-        <button onClick={handleBuyButton}>Comprar agora</button>
-      </ProductDetails>
-    </ProductContainer>
+          <p>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolores
+            aliquid rerum exercitationem facere a molestiae ut sed velit non
+            mollitia? Officiis hic velit assumenda aspernatur nihil, sint sed
+            laboriosam tempora?
+          </p>
+
+          <button
+            disabled={isCreatingCheckoutSession}
+            onClick={handleBuyButton}
+          >
+            Comprar agora
+          </button>
+        </ProductDetails>
+      </ProductContainer>
+    </>
   );
 }
 
