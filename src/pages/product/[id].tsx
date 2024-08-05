@@ -1,30 +1,22 @@
-import { GetStaticPaths, GetStaticProps } from "next";
-import { useRouter } from "next/router";
 import {
   ImageContainer,
   ProductContainer,
   ProductDetails,
 } from "@/styles/pages/products";
+import { GetStaticPaths, GetStaticProps } from "next";
 import { stripe } from "@/lib/stripe";
 import { useState } from "react";
+import { Product, ProductProps } from "@/types/cartItems";
+import { useCart } from "@/hooks/useCart";
 import Stripe from "stripe";
 import axios from "axios";
 import Image from "next/image";
 import Head from "next/head";
 
-interface ProductProps {
-  product: {
-    id: string;
-    name: string;
-    imageUrl: string;
-    price: string;
-    description: string;
-    defaultPriceId: string;
-  };
-}
-
 export default function Products({ product }: ProductProps) {
-  const { query } = useRouter();
+  const { addProductsInCart } = useCart();
+
+  const { imageUrl, name, description, price } = product;
 
   const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] =
     useState<boolean>(false);
@@ -60,33 +52,33 @@ export default function Products({ product }: ProductProps) {
     }
   }
 
+  const handleAddProductToCart = (product: Product) => {
+    addProductsInCart(product);
+  };
+
   return (
     <>
       <Head>
-        <title>{product.name} | Ignite Shop</title>
+        <title>{name} | Ignite Shop</title>
       </Head>
 
       <ProductContainer>
         <ImageContainer>
-          <Image src={product.imageUrl} width={520} height={480} alt="" />
+          <Image src={imageUrl} width={520} height={480} alt="" />
         </ImageContainer>
 
         <ProductDetails>
-          <h1>Camiseta X</h1>
-          <span>R$ 79,90</span>
+          <h1>{name}</h1>
+          <span>{price}</span>
 
-          <p>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolores
-            aliquid rerum exercitationem facere a molestiae ut sed velit non
-            mollitia? Officiis hic velit assumenda aspernatur nihil, sint sed
-            laboriosam tempora?
-          </p>
+          <p>{description}</p>
 
           <button
             disabled={isCreatingCheckoutSession}
-            onClick={handleBuyButton}
+            //onClick={handleBuyButton}
+            onClick={() => handleAddProductToCart(product)}
           >
-            Comprar agora
+            Colocar na sacola
           </button>
         </ProductDetails>
       </ProductContainer>
