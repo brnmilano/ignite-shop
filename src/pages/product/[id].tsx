@@ -5,18 +5,22 @@ import {
 } from "@/styles/pages/products";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { stripe } from "@/lib/stripe";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Product, ProductProps } from "@/types/cartItems";
 import { useCart } from "@/hooks/useCart";
 import Stripe from "stripe";
 import axios from "axios";
 import Image from "next/image";
 import Head from "next/head";
+import toast from "react-hot-toast";
+import { productsInCartKey } from "@/types/keys";
 
 export default function Products({ product }: ProductProps) {
   const { addProductsInCart } = useCart();
 
   const { imageUrl, name, description, price } = product;
+
+  const [productExists, setProductExists] = useState<[]>([]);
 
   const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] =
     useState<boolean>(false);
@@ -54,7 +58,24 @@ export default function Products({ product }: ProductProps) {
 
   const handleAddProductToCart = (product: Product) => {
     addProductsInCart(product);
+
+    if (!productExists) {
+      toast.success("Produto adicionado ao carrinho!");
+    } else {
+      toast.error("Produto já está no carrinho!");
+    }
   };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const dataJSON = JSON.parse(
+        localStorage.getItem(productsInCartKey) ?? "[]"
+      );
+
+      setProductExists(dataJSON.find((item: any) => item.id === product.id));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -64,7 +85,7 @@ export default function Products({ product }: ProductProps) {
 
       <ProductContainer>
         <ImageContainer>
-          <Image src={imageUrl} width={520} height={480} alt="" />
+          <Image src={imageUrl} width={520} height={480} alt={name} />
         </ImageContainer>
 
         <ProductDetails>
