@@ -1,73 +1,52 @@
+import { ImageContainer, ProductContainer, ProductDetails } from "./styles";
 import { GetStaticPaths, GetStaticProps } from "next";
+import { useRouter } from "next/router";
+import { useCart } from "@/hooks/useCart";
 import { stripe } from "@/lib/stripe";
-import { useState } from "react";
-import { ProductProps } from "@/types/cartItems";
 import Stripe from "stripe";
-import axios from "axios";
 import Image from "next/image";
 import Head from "next/head";
+import { IProduct } from "@/types/cartItems";
 
-import { ImageContainer, ProductContainer, ProductDetails } from "./styles";
+interface ProductProps {
+  product: IProduct;
+}
 
-export default function Products({ product }: ProductProps) {
-  const { imageUrl, name, description, price } = product;
+export default function Product({ product }: ProductProps) {
+  const { isFallback } = useRouter();
 
-  const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] =
-    useState<boolean>(false);
+  const { addToCart, checkIfItemAlreadyExists } = useCart();
 
-  async function handleBuyButton() {
-    // try catch deve ser usado quando vamos lidar com requisições de
-    // api's externas principalmente para operações que vem atráves
-    // de ações do usuário, dessa forma, conseguimos apresentar ao usuário
-    // se está tudo certo ou se houve algum erro.
-    try {
-      setIsCreatingCheckoutSession(true);
-
-      // Como quero criar uma checkout session, o melhor método a ser usado
-      // é o post.
-      // Nesse caso não é necessário criar um arquivo service, setando o baseUrl
-      // Aqui a API está rodando no mesmo endereço localhost:3000.
-      // O axios já entende que a requisição é para a mesma origem.
-      const response = await axios.post("/api/checkout", {
-        priceId: product.defaultPriceId,
-      });
-
-      const { checkoutUrl } = response.data;
-
-      // Modelo utilizado para redirecionamento de páginas externas
-      // Para páginas dentro da aplicação, o ideal é usar o useRouter
-      window.location.href = checkoutUrl;
-    } catch (err) {
-      // Aqui, podemos conectar com alguma ferramenta de observabilidade
-      // Datadog ou Sentry para monitorar os erros que estão acontecendo.
-      setIsCreatingCheckoutSession(false);
-
-      alert("Falha ao redirecionar ao checkout!");
-    }
+  if (isFallback) {
+    return <p>Loading...</p>;
   }
+
+  const itemAlreadyInCart = checkIfItemAlreadyExists(product.id);
 
   return (
     <>
       <Head>
-        <title>{name} | Ignite Shop</title>
+        <title>{`${product.name} | Ignite Shop`}</title>
       </Head>
-
+      
       <ProductContainer>
         <ImageContainer>
-          <Image src={imageUrl} width={520} height={480} alt={name} />
+          <Image src={product.imageUrl} width={520} height={480} alt="" />
         </ImageContainer>
 
         <ProductDetails>
-          <h1>{name}</h1>
-          <span>{price}</span>
+          <h1>{product.name}</h1>
+          <span>{product.price}</span>
 
-          <p>{description}</p>
+          <p>{product.description}</p>
 
           <button
-            disabled={isCreatingCheckoutSession}
-            onClick={handleBuyButton}
+            disabled={itemAlreadyInCart}
+            onClick={() => addToCart(product)}
           >
-            Colocar na sacola
+            {itemAlreadyInCart
+              ? "Produto já está no carrinho"
+              : "Colocar na sacola"}
           </button>
         </ProductDetails>
       </ProductContainer>
