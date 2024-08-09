@@ -85,6 +85,7 @@ export const CartProductDetails = styled("div", {
     color: "$green500",
     fontSize: "1rem",
     fontWeight: 700,
+    cursor: "pointer",
   },
 });
 
@@ -102,6 +103,7 @@ export const CartFinalization = styled("div", {
     border: "none",
     borderRadius: 8,
     fontWeight: 700,
+    cursor: "pointer",
 
     "&:disabled": {
       opacity: 0.6,

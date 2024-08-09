@@ -1,7 +1,4 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import axios from "axios";
-import { useState } from "react";
-import { CartButton } from "../CartButton";
 import {
   CartClose,
   CartContent,
@@ -11,12 +8,16 @@ import {
   CartProductImage,
   FinalizationDetails,
 } from "./styles";
+import { useState } from "react";
+import { CartButton } from "../CartButton";
 import { X } from "phosphor-react";
-import Image from "next/image";
 import { useCart } from "@/hooks/useCart";
+import Image from "next/image";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 export function Cart() {
-  const { cartItems, removeCartItem, cartTotal } = useCart();
+  const { cartItems, cartTotal, removeCartItem } = useCart();
   const cartQuantity = cartItems.length;
 
   const formattedCartTotal = new Intl.NumberFormat("pt-BR", {
@@ -38,9 +39,10 @@ export function Cart() {
       const { checkoutUrl } = response.data;
 
       window.location.href = checkoutUrl;
-    } catch (err) {
+    } catch (error) {
       setIsCreatingCheckoutSession(false);
-      alert("Falha ao redirecionar ao checkout!");
+
+      toast.error("Falha ao redirecionar ao checkout!");
     }
   }
 
@@ -69,14 +71,16 @@ export function Cart() {
                   <Image
                     width={100}
                     height={93}
-                    alt=""
                     src={cartItem.imageUrl}
+                    alt={cartItem.name}
                   />
                 </CartProductImage>
 
                 <CartProductDetails>
                   <p>{cartItem.name}</p>
+
                   <strong>{cartItem.price}</strong>
+
                   <button onClick={() => removeCartItem(cartItem.id)}>
                     Remover
                   </button>

@@ -2,12 +2,12 @@ import { useKeenSlider } from "keen-slider/react";
 import { GetStaticProps } from "next";
 import { stripe } from "@/lib/stripe";
 import { Handbag } from "phosphor-react";
+import { HomeContainer, Product } from "./styles";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import Stripe from "stripe";
 import "keen-slider/keen-slider.min.css";
-import { HomeContainer, Product } from "./styles";
 
 interface HomeProps {
   products: {
@@ -71,7 +71,7 @@ export const getStaticProps: GetStaticProps = async () => {
   const products = response.data.map((product: any) => {
     const price = product.default_price as Stripe.Price;
 
-    const unit_amount = price.unit_amount ?? 0;
+    const unit_amount = Number(price.unit_amount);
 
     return {
       id: product.id,
@@ -88,6 +88,6 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       products,
     },
-    revalidate: 60 * 60 * 2, // 2 hours
+    revalidate: 60 * 60 * 2, // 2 horas
   };
 };
