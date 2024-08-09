@@ -15,7 +15,9 @@ export interface IProduct {
   name: string;
   imageUrl: string;
   price: string;
-  numberPrice: number;
   description: string;
   defaultPriceId: string;
+  quantity: number;
+  totalItemPrice: number;
+  numberPrice: number;
 }

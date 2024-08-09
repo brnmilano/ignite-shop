@@ -17,7 +17,7 @@ import { useCart } from "@/hooks/useCart";
 
 export function Cart() {
   const { cartItems, removeCartItem, cartTotal } = useCart();
-  const cartQuantity = cartItems?.length;
+  const cartQuantity = cartItems.length;
 
   const formattedCartTotal = new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -62,7 +62,7 @@ export function Cart() {
             {cartItems?.length <= 0 && (
               <p>Parece que seu carrinho está vazio : (</p>
             )}
-            
+
             {cartItems?.map((cartItem) => (
               <CartProduct key={cartItem.id}>
                 <CartProductImage>

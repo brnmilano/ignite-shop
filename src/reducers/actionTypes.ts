@@ -1,0 +1,9 @@
+/**
+ * Enumeração de tipos de ações para produtos.
+ */
+export enum ActionTypes {
+  ADD_NEW_PRODUCT = "ADD_NEW_PRODUCT",
+  REMOVE_PRODUCT = "REMOVE_PRODUCT",
+  INCREASE_PRODUCT_QUANTITY = "INCREASE_PRODUCT_QUANTITY",
+  DECREASE_PRODUCT_QUANTITY = "DECREASE_PRODUCT_QUANTITY",
+}

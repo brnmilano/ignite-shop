@@ -17,9 +17,9 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Container className={roboto.className}>
-        <Header />
-
         <CartProvider>
+          <Header />
+          
           <Toaster position="top-center" />
 
           <Component {...pageProps} />
