@@ -8,7 +8,7 @@
   npm install
   ```
 
-- Com esse passo finalizado, existem mais alguns scripts disponíveis para você
+- Com esse passo finalizado, existem mais alguns scripts disponíveis para você:
 
   Iniciar em modo de desenvolvimento:
 
